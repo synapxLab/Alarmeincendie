@@ -1,0 +1,14 @@
+# Modèle de configuration de signature release.
+#
+# COPIER ce fichier en `key.properties` (dans le dossier android/) et y mettre
+# les vraies valeurs. NE JAMAIS versionner `key.properties` ni le keystore :
+# ils sont exclus par .gitignore.
+#
+# Voir la procédure complète dans /google-play/README.md (section keystore).
+
+storePassword=MOT_DE_PASSE_DU_KEYSTORE
+keyPassword=MOT_DE_PASSE_DE_LA_CLE
+keyAlias=upload
+# Chemin vers le fichier keystore (.jks). Absolu de préférence, ex :
+# storeFile=/home/synapxlab/keys/alertfindumonde-upload.jks
+storeFile=CHEMIN/VERS/alertfindumonde-upload.jks

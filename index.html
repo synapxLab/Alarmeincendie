@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlertFinDuMonde — Le signal d'urgence qu'on ne peut pas ignorer</title>
+<meta name="description" content="Entraînement aux situations critiques et déclenchement d'alerte en temps réel : évacuation incendie, panne serveur, ransomware, perte de base de données.">
+<style>
+  :root {
+    --rouge: #d32f2f;
+    --rouge-fonce: #9a0007;
+    --encre: #1b2330;
+    --gris: #5b6675;
+    --gris-clair: #eef1f5;
+    --bord: #dfe4ea;
+    --fond: #f7f9fc;
+    --blanc: #ffffff;
+    --vert: #2e7d32;
+    --rayon: 12px;
+    --ombre: 0 1px 3px rgba(27,35,48,.08), 0 8px 24px rgba(27,35,48,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--encre);
+    background: var(--fond);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--rouge); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* En-tête */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--bord);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; letter-spacing: -.3px; }
+  .logo .pastille { width: 14px; height: 14px; border-radius: 50%; background: var(--rouge); box-shadow: 0 0 0 4px rgba(211,47,47,.15); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 4px rgba(211,47,47,.15);} 50% { box-shadow: 0 0 0 8px rgba(211,47,47,.05);} }
+  .nav nav { display: flex; gap: 26px; }
+  .nav nav a { color: var(--gris); font-weight: 600; font-size: .92rem; }
+  .nav nav a:hover { color: var(--encre); text-decoration: none; }
+  @media (max-width: 760px) { .nav nav { display: none; } }
+
+  /* Hero */
+  .hero { padding: 84px 0 64px; text-align: center; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fdecec; color: var(--rouge-fonce);
+    border: 1px solid #f6c9c9; border-radius: 999px;
+    padding: 6px 14px; font-size: .82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 22px;
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; letter-spacing: -1px; margin-bottom: 18px; }
+  .hero h1 .accent { color: var(--rouge); }
+  .hero p.sub { font-size: 1.2rem; color: var(--gris); max-width: 680px; margin: 0 auto 32px; }
+  .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 24px; border-radius: var(--rayon); font-weight: 700; font-size: .98rem;
+    border: 1px solid transparent; cursor: pointer; transition: transform .1s ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn-primary { background: var(--rouge); color: #fff; }
+  .btn-primary:hover { background: var(--rouge-fonce); color: #fff; }
+  .btn-ghost { background: var(--blanc); color: var(--encre); border-color: var(--bord); box-shadow: var(--ombre); }
+
+  /* Sections */
+  section.bloc { padding: 64px 0; }
+  .titre-sec { text-align: center; margin-bottom: 12px; }
+  .titre-sec .mini { color: var(--rouge); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: .82rem; }
+  .titre-sec h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); letter-spacing: -.5px; margin: 6px 0; }
+  .titre-sec p { color: var(--gris); max-width: 640px; margin: 0 auto; }
+
+  /* Deux modes */
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+  @media (max-width: 760px) { .modes { grid-template-columns: 1fr; } }
+  .mode {
+    background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon);
+    padding: 30px; box-shadow: var(--ombre);
+  }
+  .mode .ic { font-size: 2rem; }
+  .mode h3 { margin: 14px 0 8px; font-size: 1.3rem; }
+  .mode p { color: var(--gris); }
+  .mode .tag { display: inline-block; margin-top: 14px; font-size: .8rem; font-weight: 700; color: var(--rouge-fonce); background: #fdecec; padding: 4px 10px; border-radius: 6px; }
+
+  /* Cas d'usage */
+  .grid-cas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px; }
+  @media (max-width: 760px) { .grid-cas { grid-template-columns: 1fr; } }
+  .cas {
+    background: var(--blanc); border: 1px solid var(--bord); border-left: 4px solid var(--rouge);
+    border-radius: var(--rayon); padding: 24px; display: flex; gap: 18px; box-shadow: var(--ombre);
+  }
+  .cas .ic { font-size: 1.9rem; line-height: 1; }
+  .cas h4 { font-size: 1.12rem; margin-bottom: 4px; }
+  .cas p { color: var(--gris); font-size: .96rem; }
+
+  /* Fonctionnement */
+  .etapes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; counter-reset: step; }
+  @media (max-width: 880px) { .etapes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .etapes { grid-template-columns: 1fr; } }
+  .etape { position: relative; padding: 24px 20px; background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon); }
+  .etape::before {
+    counter-increment: step; content: counter(step);
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%; background: var(--rouge); color: #fff;
+    font-weight: 800; margin-bottom: 14px;
+  }
+  .etape h4 { font-size: 1.02rem; margin-bottom: 6px; }
+  .etape p { color: var(--gris); font-size: .92rem; }
+
+  /* API */
+  .api { background: var(--encre); color: #e6ebf2; }
+  .api .titre-sec h2, .api .titre-sec p { color: #e6ebf2; }
+  .api .titre-sec .mini { color: #ff8a80; }
+  .api .note {
+    text-align: center; margin: 0 auto 36px; max-width: 620px;
+    background: rgba(255,138,128,.12); border: 1px solid rgba(255,138,128,.35);
+    color: #ffd6d1; border-radius: var(--rayon); padding: 12px 18px; font-size: .92rem;
+  }
+  .api-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; align-items: start; }
+  @media (max-width: 880px) { .api-grid { grid-template-columns: 1fr; } }
+  .endpoint { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .endpoint .method { display: inline-block; background: var(--rouge); color: #fff; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: .85rem; }
+  .endpoint .url { color: #9fb3c8; word-break: break-all; }
+  .champs { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: .9rem; }
+  .champs th, .champs td { text-align: left; padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,.1); vertical-align: top; }
+  .champs th { color: #9fb3c8; font-weight: 700; }
+  .champs code { color: #ffab91; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  pre {
+    background: #11161f; border: 1px solid rgba(255,255,255,.08); border-radius: var(--rayon);
+    padding: 18px; overflow-x: auto; font-size: .86rem; line-height: 1.55;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  pre .k { color: #82aaff; }  /* clés */
+  pre .s { color: #c3e88d; }  /* chaînes */
+  pre .c { color: #6b7a8d; }  /* commentaires */
+  pre .n { color: #f78c6c; }  /* nombres / méthode */
+  .pre-titre { color: #9fb3c8; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin: 22px 0 8px; }
+
+  /* Fonctionnalités */
+  .feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 40px; }
+  @media (max-width: 760px) { .feats { grid-template-columns: 1fr; } }
+  .feat { display: flex; gap: 12px; padding: 18px; background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon); }
+  .feat .chk { color: var(--vert); font-weight: 800; }
+  .feat b { display: block; }
+  .feat span { color: var(--gris); font-size: .92rem; }
+
+  /* Pied */
+  footer { border-top: 1px solid var(--bord); padding: 36px 0; text-align: center; color: var(--gris); font-size: .9rem; }
+  footer .logo { justify-content: center; margin-bottom: 10px; color: var(--encre); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo"><span class="pastille"></span> AlertFinDuMonde</div>
+    <nav>
+      <a href="#concept">Concept</a>
+      <a href="#cas">Cas d'usage</a>
+      <a href="#fonctionnement">Fonctionnement</a>
+      <a href="#api">API</a>
+    </nav>
+    <a class="btn btn-primary" href="#api" style="padding:8px 16px;">Documentation</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge">🚨 Préparation &amp; réponse aux urgences</span>
+      <h1>Le signal d'urgence<br>qu'on ne peut <span class="accent">pas ignorer</span>.</h1>
+      <p class="sub">
+        Entraînez vos équipes aux situations critiques — au moment où elles ne s'y attendent pas —
+        ou déclenchez l'alerte en temps réel quand le drame arrive vraiment.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#cas">Découvrir les cas d'usage</a>
+        <a class="btn btn-ghost" href="#api">Voir l'API de déclenchement</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCEPT / DEUX MODES -->
+  <section class="bloc" id="concept">
+    <div class="wrap">
+      <div class="titre-sec">
+        <div class="mini">Le concept</div>
+        <h2>Une alarme. Deux façons de la déclencher.</h2>
+        <p>Un son strident, plein écran, qui force le volume et passe outre le mode silencieux. Impossible à manquer.</p>
+      </div>
+      <div class="modes">
+        <div class="mode">
+          <div class="ic">🎲</div>
+          <h3>Mode entraînement</h3>
+          <p>L'alarme se déclenche <strong>1 à 4 fois par an</strong>, à un instant <strong>imprévisible</strong>, dans une plage horaire que vous choisissez. Personne ne sait quand : on mesure la vraie réactivité, pas l'exercice répété par cœur.</p>
+          <span class="tag">Chrono de réaction intégré</span>
+        </div>
+        <div class="mode">
+          <div class="ic">⚡</div>
+          <h3>Mode incident réel</h3>
+          <p>Votre supervision détecte un problème grave et appelle l'<strong>API de déclenchement</strong> : l'alarme retentit instantanément sur les téléphones de l'équipe d'astreinte. Le drame ne dort jamais — votre alerte non plus.</p>
+          <span class="tag">Webhook · temps réel</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAS D'USAGE -->
+  <section class="bloc" id="cas" style="background:var(--gris-clair);">
+    <div class="wrap">
+      <div class="titre-sec">
+        <div class="mini">Cas d'usage</div>
+        <h2>Du bâtiment à la salle serveurs.</h2>
+        <p>La même mécanique d'alerte, qu'il s'agisse de protéger des personnes ou des données.</p>
+      </div>
+      <div class="grid-cas">
+        <div class="cas">
+          <div class="ic">🔥</div>
+          <div><h4>Évacuation incendie</h4><p>L'exercice surprise classique, mais réellement imprévisible. On chronomètre le temps d'évacuation réel de chacun.</p></div>
+        </div>
+        <div class="cas">
+          <div class="ic">🖥️</div>
+          <div><h4>Serveur en panne</h4><p>Le serveur de production tombe à 3 h du matin. Qui réagit, en combien de temps ? Entraînez l'astreinte, ou alertez à l'instant T.</p></div>
+        </div>
+        <div class="cas">
+          <div class="ic">🔒</div>
+          <div><h4>Ransomware / disque chiffré</h4><p>Une détection de chiffrement anormal déclenche l'alerte : chaque minute compte pour isoler les machines avant la propagation.</p></div>
+        </div>
+        <div class="cas">
+          <div class="ic">🗄️</div>
+          <div><h4>Base de données supprimée</h4><p>Un <code>DROP</code> de trop, une réplication corrompue. L'alarme lance la procédure de restauration d'urgence, sans délai.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FONCTIONNEMENT -->
+  <section class="bloc" id="fonctionnement">
+    <div class="wrap">
+      <div class="titre-sec">
+        <div class="mini">Fonctionnement</div>
+        <h2>Quatre étapes, zéro friction.</h2>
+      </div>
+      <div class="etapes">
+        <div class="etape"><h4>Installez l'app</h4><p>Sur les téléphones de l'équipe (Android). Quelques réglages, et c'est prêt.</p></div>
+        <div class="etape"><h4>Choisissez le mode</h4><p>Entraînement planifié (fréquence + plage horaire) ou déclenchement via l'API.</p></div>
+        <div class="etape"><h4>Ça sonne</h4><p>Son strident, plein écran rouge, vibration — même app fermée ou téléphone verrouillé.</p></div>
+        <div class="etape"><h4>On mesure</h4><p>Un chrono démarre. « Mettre en sourdine » puis « Exercice terminé » : le temps de réaction est figé.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API -->
+  <section class="bloc api" id="api">
+    <div class="wrap">
+      <div class="titre-sec">
+        <div class="mini">API de déclenchement</div>
+        <h2>Faites sonner l'alerte par webhook.</h2>
+        <p>Un appel HTTP depuis votre supervision (Zabbix, Prometheus, un cron, un script de détection…) suffit à réveiller l'astreinte.</p>
+      </div>
+      <div class="note">⚠️ <strong>Spécification en cours de conception.</strong> Cette page définit le contrat d'API visé ; le backend et la réception côté application seront implémentés ensuite.</div>
+
+      <div class="api-grid">
+        <div>
+          <div class="endpoint">
+            <span class="method">POST</span><br><br>
+            <span class="url">https://&lt;votre-domaine&gt;/api/v1/trigger</span>
+          </div>
+          <table class="champs">
+            <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+            <tr><td><code>type</code></td><td>string</td><td><code>fire</code>, <code>server_down</code>, <code>ransomware</code>, <code>db_loss</code>, <code>custom</code></td></tr>
+            <tr><td><code>severity</code></td><td>string</td><td><code>info</code> · <code>warning</code> · <code>critical</code></td></tr>
+            <tr><td><code>title</code></td><td>string</td><td>Titre affiché en plein écran.</td></tr>
+            <tr><td><code>message</code></td><td>string</td><td>Détail de l'incident.</td></tr>
+            <tr><td><code>targets</code></td><td>string[]</td><td>Identifiants d'appareils / groupes d'astreinte (optionnel = tous).</td></tr>
+            <tr><td><code>source</code></td><td>string</td><td>Origine de l'alerte (ex. <code>zabbix-prod</code>).</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="pre-titre">Requête — exemple curl</div>
+<pre><span class="n">curl</span> -X POST https://votre-domaine/api/v1/trigger \
+  -H <span class="s">"Authorization: Bearer &lt;API_KEY&gt;"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="k">"type"</span>: <span class="s">"ransomware"</span>,
+    <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+    <span class="k">"title"</span>: <span class="s">"Chiffrement anormal détecté"</span>,
+    <span class="k">"message"</span>: <span class="s">"Pic d'écritures sur NAS-01 — isoler immédiatement."</span>,
+    <span class="k">"targets"</span>: [<span class="s">"astreinte-infra"</span>],
+    <span class="k">"source"</span>: <span class="s">"edr-sensor-12"</span>
+  }'</pre>
+          <div class="pre-titre">Réponse — 202 Accepted</div>
+<pre>{
+  <span class="k">"id"</span>: <span class="s">"trg_9f2a7c"</span>,
+  <span class="k">"status"</span>: <span class="s">"dispatched"</span>,
+  <span class="k">"delivered_to"</span>: <span class="n">3</span>,
+  <span class="k">"received_at"</span>: <span class="s">"2026-06-24T23:14:05Z"</span>
+}</pre>
+          <p style="color:#9fb3c8; font-size:.85rem; margin-top:14px;">
+            <span class="c">// Authentification par clé API (Bearer). Les appareils s'enregistrent depuis l'app.</span><br>
+            <span class="c">// Acquittement : POST /api/v1/triggers/{id}/ack — pour mesurer le temps de réaction.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FONCTIONNALITÉS -->
+  <section class="bloc" id="fonctionnalites">
+    <div class="wrap">
+      <div class="titre-sec">
+        <div class="mini">Sous le capot</div>
+        <h2>Conçu pour ne jamais rater l'alerte.</h2>
+      </div>
+      <div class="feats">
+        <div class="feat"><span class="chk">✓</span><div><b>Alarme exacte hors app</b><span>Sonne même app fermée, et survit au redémarrage du téléphone.</span></div></div>
+        <div class="feat"><span class="chk">✓</span><div><b>Volume forcé</b><span>Passe outre le mode silencieux et remet le volume au maximum.</span></div></div>
+        <div class="feat"><span class="chk">✓</span><div><b>Plein écran &amp; verrouillage</b><span>S'affiche par-dessus tout, écran éteint ou verrouillé.</span></div></div>
+        <div class="feat"><span class="chk">✓</span><div><b>Chrono de réaction</b><span>Mesure le temps entre l'alerte et l'acquittement.</span></div></div>
+        <div class="feat"><span class="chk">✓</span><div><b>Fréquence paramétrable</b><span>De 1 à 4 exercices par an, dans la plage horaire de votre choix.</span></div></div>
+        <div class="feat"><span class="chk">✓</span><div><b>Mises à jour Play</b><span>Mise à jour intégrée via l'API officielle Google Play.</span></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="pastille"></span> AlertFinDuMonde</div>
+    <p>Préparation et réponse aux urgences — physiques comme numériques.</p>
+    <p style="margin-top:8px; font-size:.82rem;">Spécification d'API en cours de conception · Application Android</p>
+  </div>
+</footer>
+
+</body>
+</html>
